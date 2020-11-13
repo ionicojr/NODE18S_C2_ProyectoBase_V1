@@ -21,7 +21,8 @@ module.exports = {
       let cliente = await Cliente.create({
         email: peticion.body.email,
         nombre: peticion.body.nombre,
-        contrasena: peticion.body.contrasena
+        contrasena: peticion.body.contrasena,
+        activo: true
       })
       peticion.session.cliente = cliente;
       peticion.addFlash('mensaje', 'Cliente registrado')
@@ -34,7 +35,7 @@ module.exports = {
   },
 
   procesarInicioSesion: async (peticion, respuesta) => {
-    let cliente = await Cliente.findOne({ email: peticion.body.email, contrasena: peticion.body.contrasena });
+    let cliente = await Cliente.findOne({ email: peticion.body.email, contrasena: peticion.body.contrasena, activo: true });
     if (cliente) {
       peticion.session.cliente = cliente
       let carroCompra = await CarroCompra.find({cliente: cliente.id})

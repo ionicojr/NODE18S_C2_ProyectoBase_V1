@@ -15,7 +15,7 @@ module.exports = {
   },
 
   procesarInicioSesion: async (peticion, respuesta) => {
-    let admin = await Admin.findOne({ email: peticion.body.email, contrasena: peticion.body.contrasena })
+    let admin = await Admin.findOne({ email: peticion.body.email, contrasena: peticion.body.contrasena, activo:  true })
     if (admin) {
       peticion.session.admin = admin
       peticion.session.cliente = undefined
