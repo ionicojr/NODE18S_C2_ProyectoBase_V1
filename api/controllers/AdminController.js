@@ -79,5 +79,56 @@ module.exports = {
     return respuesta.redirect("/admin/principal")
   },
 
+  clientes: async (peticion, respuesta) => {
+    if (!peticion.session || !peticion.session.admin) {
+      peticion.addFlash('mensaje', 'Sesión inválida')
+      return respuesta.redirect("/admin/inicio-sesion")
+    }   
+    let clientes = await Cliente.find().sort("id")
+    respuesta.view('pages/admin/clientes', { clientes })  
+  },
+
+  ordenes: async (peticion, respuesta) => {
+    if (!peticion.session || !peticion.session.admin) {
+      peticion.addFlash('mensaje', 'Sesión inválida')
+      return respuesta.redirect("/admin/inicio-sesion")
+    }   
+    let ordenes = await Orden.find({ cliente: peticion.params.clienteId }).sort('id desc')
+    let cliente = await Cliente.findOne({ id: peticion.params.clienteId })
+    respuesta.view('pages/admin/ordenes', { ordenes, cliente })  
+  },
+
+  fotos: async (peticion, respuesta) => {
+
+    let consulta = `
+    SELECT
+      foto.id,
+      foto.titulo,
+      foto.contenido,
+      foto.activa
+    FROM
+      orden_detalle detalle
+      INNER JOIN foto ON detalle.foto_id = foto.Id  
+    WHERE  
+      detalle.orden_id = $1
+    `
+    await OrdenDetalle.query(consulta, [peticion.params.ordenId], (errores, resultado) => {
+      let fotos = resultado.rows
+      respuesta.view('pages/admin/fotos', { fotos })
+    })
+  },
+  
+  activarCliente: async (peticion, respuesta) => {
+    await Cliente.update({id: peticion.params.clienteId}, {activo: true})
+    peticion.addFlash('mensaje', 'Cliente Activado')
+    return respuesta.redirect("/admin/clientes")
+  },
+
+  desactivarCliente: async (peticion, respuesta) => {
+    await Cliente.update({id: peticion.params.clienteId}, {activo: false})
+    peticion.addFlash('mensaje', 'Cliente Desactivado')
+    return respuesta.redirect("/admin/clientes")
+  },
+
 };
 
