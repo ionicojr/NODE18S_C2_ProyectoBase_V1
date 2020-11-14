@@ -79,6 +79,7 @@ module.exports = {
     return respuesta.redirect("/admin/principal")
   },
 
+// SECCION CLIENTES  
   clientes: async (peticion, respuesta) => {
     if (!peticion.session || !peticion.session.admin) {
       peticion.addFlash('mensaje', 'Sesión inválida')
@@ -130,6 +131,7 @@ module.exports = {
     return respuesta.redirect("/admin/clientes")
   },
 
+//SECCION ADMINISTRADORES   
   administradores: async (peticion, respuesta) => {
     if (!peticion.session || !peticion.session.admin) {
       peticion.addFlash('mensaje', 'Sesión inválida')
@@ -151,6 +153,7 @@ module.exports = {
     return respuesta.redirect("/admin/administradores")
   },
 
+//SECCION DASHBOARD    
   dashboard: async (peticion, respuesta) => {
     if (!peticion.session || !peticion.session.admin) {
       peticion.addFlash('mensaje', 'Sesión inválida')
