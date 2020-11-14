@@ -130,5 +130,26 @@ module.exports = {
     return respuesta.redirect("/admin/clientes")
   },
 
+  administradores: async (peticion, respuesta) => {
+    if (!peticion.session || !peticion.session.admin) {
+      peticion.addFlash('mensaje', 'Sesión inválida')
+      return respuesta.redirect("/admin/inicio-sesion")
+    }   
+    let administradores = await Admin.find().sort("id")
+    respuesta.view('pages/admin/administradores', { administradores })  
+  },  
+
+  activarAdministrador: async (peticion, respuesta) => {
+    await Admin.update({id: peticion.params.administradorId}, {activo: true})
+    peticion.addFlash('mensaje', 'Administrador Activado')
+    return respuesta.redirect("/admin/administradores")
+  },
+
+  desactivarAdministrador: async (peticion, respuesta) => {
+    await Admin.update({id: peticion.params.administradorId}, {activo: false})
+    peticion.addFlash('mensaje', 'Administrador Desactivado')
+    return respuesta.redirect("/admin/administradores")
+  },  
+
 };
 
