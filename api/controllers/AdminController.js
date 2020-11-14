@@ -149,6 +149,19 @@ module.exports = {
     await Admin.update({id: peticion.params.administradorId}, {activo: false})
     peticion.addFlash('mensaje', 'Administrador Desactivado')
     return respuesta.redirect("/admin/administradores")
+  },
+
+  dashboard: async (peticion, respuesta) => {
+    if (!peticion.session || !peticion.session.admin) {
+      peticion.addFlash('mensaje', 'Sesión inválida')
+      return respuesta.redirect("/admin/inicio-sesion")
+    }   
+    let clientes = await Cliente.count()
+    let fotos = await Foto.count()
+    let administradores = await Admin.count()
+    let ordenes = await Orden.count()    
+    
+    respuesta.view('pages/admin/dashboard', { clientes, fotos, administradores, ordenes })  
   },  
 
 };
